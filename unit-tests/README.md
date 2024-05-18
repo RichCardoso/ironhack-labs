@@ -66,11 +66,11 @@ public class ExamplesService {
     }
 
     public UiComponentModel setupUiComponent(Integer size) throws Exception {
-        UiComponentModel uiComponentModel = new UiComponentModel();
-        uiComponentModel.setSize(size);
         if(size < 0) {
             throw new Exception("Size cannot be negative");
         }
+        UiComponentModel uiComponentModel = new UiComponentModel();
+        uiComponentModel.setSize(size);
         return uiComponentModel;
     }
 }
