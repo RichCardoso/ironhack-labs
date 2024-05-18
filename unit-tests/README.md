@@ -149,12 +149,10 @@ Para el tercer escenario creamos dos tests donde elprimero valida la correcta as
     private final ExamplesService examplesService = new ExamplesService();
 
     @Test
-    public void testSetupUiComponent_successResize() throws Exception {
+    public void testSetupUiComponent_successOriginalResize() throws Exception {
         Integer originalSize = 10;
         UiComponentModel uiComponentModel = examplesService.setupUiComponent(originalSize);
         assertEquals(originalSize, uiComponentModel.getSize());
-        assertEquals("UI should adjust to width of 1024 pixels", uiComponentModel.adjustToScreenSize(1024));
-        assertEquals(1024, uiComponentModel.getSize());
     }
 
     @Test
