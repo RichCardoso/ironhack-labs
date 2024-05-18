@@ -4,7 +4,7 @@ Se define los modelos a ocupar, primero ocuparemos DataModel
 ```
 public class DataModel {
     private String data;
-    private String processedSuccessfully;
+    private boolean processedSuccessfully;
 
     public DataModel(String data) {
         this.data = data;
@@ -17,11 +17,11 @@ public class DataModel {
         this.data = data;
     }
 
-    public String getProcessedSuccessfully() {
+    public boolean isProcessedSuccessfully() {
         return processedSuccessfully;
     }
 
-    public void setProcessedSuccessfully(String processedSuccessfully) {
+    public void setProcessedSuccessfully(boolean processedSuccessfully) {
         this.processedSuccessfully = processedSuccessfully;
     }
 }
@@ -40,9 +40,8 @@ public class UiComponentModel {
         this.size = size;
     }
 
-    public String adjustToScreenSize(Integer screenSize) {
-        size = screenSize;
-        return "UI should adjust to width of " + screenSize + " pixels";
+    public boolean adjustToScreenSize(Integer screenSize) {
+        return Objects.equals(this.size, screenSize);
     }
 }
 ```
@@ -63,7 +62,7 @@ public class ExamplesService {
         if (dataModel.getData().equalsIgnoreCase("some error")) {
             throw new Exception("Data processing error");
         }
-        dataModel.setProcessedSuccessfully("Data should be processed successfully");
+        dataModel.setProcessedSuccessfully(true);
     }
 
     public UiComponentModel setupUiComponent(Integer size) throws Exception {
@@ -74,7 +73,6 @@ public class ExamplesService {
         }
         return uiComponentModel;
     }
-
 }
 ```
 
@@ -126,8 +124,7 @@ Para el segundo escenario creamos dos test donde validamos que la data se proces
     public void testProcessData_successfullyProcessing() throws Exception {
         DataModel dataModel = fetchData();
         examplesService.processData(dataModel);
-        String expectedMessage = "Data should be processed successfully";
-        assertEquals(expectedMessage, dataModel.getProcessedSuccessfully());
+        assertTrue(dataModel.isProcessedSuccessfully(), "Data should be processed successfully");
     }
 
     @Test
@@ -144,16 +141,9 @@ Para el segundo escenario creamos dos test donde validamos que la data se proces
 
 ## Scenario 3: UI Responsiveness
 
-Para el tercer escenario creamos dos tests donde elprimero valida la correcta asignacion del valor de configuracion inicial, y el otro donde validamos el uso de valores negativos para el tamaño
+Para el tercer escenario creamos un test donde validamos el uso de valores negativos para el tamaño
 ```
     private final ExamplesService examplesService = new ExamplesService();
-
-    @Test
-    public void testSetupUiComponent_successOriginalResize() throws Exception {
-        Integer originalSize = 10;
-        UiComponentModel uiComponentModel = examplesService.setupUiComponent(originalSize);
-        assertEquals(originalSize, uiComponentModel.getSize());
-    }
 
     @Test
     public void testSetupUiComponent_failResizeWithNegative() {
@@ -173,7 +163,7 @@ Adiconalmente creamos un test parametrizado en el que probamos que el mensaje se
     @ParameterizedTest
     @ValueSource(ints = {1024, 3215, 585, 100, Integer.MAX_VALUE})
     public void testSetupUiComponent_successAdjustAnyResize(Integer adjustedSize) throws Exception {
-        UiComponentModel uiComponentModel = examplesService.setupUiComponent(10);
-        assertEquals("UI should adjust to width of " + adjustedSize + " pixels", uiComponentModel.adjustToScreenSize(adjustedSize));
+        UiComponentModel uiComponentModel = examplesService.setupUiComponent(adjustedSize);
+        assertTrue(uiComponentModel.adjustToScreenSize(adjustedSize), "UI should adjust to width of " + adjustedSize + " pixels");
     }
 ```
