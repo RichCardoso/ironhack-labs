@@ -170,10 +170,10 @@ Adiconalmente creamos un test parametrizado en el que probamos que el mensaje se
 ```
     private final ExamplesService examplesService = new ExamplesService();
 
-    @Test
-    public void testSetupUiComponent_successOriginalResize() throws Exception {
-        Integer originalSize = 10;
-        UiComponentModel uiComponentModel = examplesService.setupUiComponent(originalSize);
-        assertEquals(originalSize, uiComponentModel.getSize());
+    @ParameterizedTest
+    @ValueSource(ints = {1024, 3215, 585, 100, Integer.MAX_VALUE})
+    public void testSetupUiComponent_successAdjustAnyResize(Integer adjustedSize) throws Exception {
+        UiComponentModel uiComponentModel = examplesService.setupUiComponent(10);
+        assertEquals("UI should adjust to width of " + adjustedSize + " pixels", uiComponentModel.adjustToScreenSize(adjustedSize));
     }
 ```
