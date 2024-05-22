@@ -1,5 +1,5 @@
 # 1. SQL Query Optimization
-## Orders Query
+## 1.1 Orders Query
 > Problema:
 ```
 SELECT Orders.OrderID, SUM(OrderDetails.Quantity * OrderDetails.UnitPrice) AS TotalPrice
@@ -14,7 +14,7 @@ CREATE INDEX idx_orders_orderid ON Orders(OrderID);
 CREATE INDEX idx_orders_quantity ON Orders(Quantity);
 ```
 
-## Customer Query
+## 1.2 Customer Query
 > Problema:
 ```
 SELECT CustomerName FROM Customers WHERE City = 'London' ORDER BY CustomerName;
@@ -25,8 +25,8 @@ CREATE INDEX idx_customers_city ON Customers(City);
 CREATE INDEX idx_customers_customername ON Customers(CustomerName);
 ```
 
-# NoSQL Query Implementation
-## User Posts Query
+# 2. NoSQL Query Implementation
+## 2.1 User Posts Query
 > Problema: 
 ```
 db.posts
@@ -39,7 +39,7 @@ db.posts.createIndex({ status: 1 });
 db.posts.createIndex({ likes: -1 });
 ```
 
-## User Data Aggregation
+## 2.2 User Data Aggregation
 > Problema: 
 ```
 db.users.aggregate([
