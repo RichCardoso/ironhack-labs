@@ -104,11 +104,105 @@ public class VechicleService {
 > Para este caso usaremos el patron de **Observer** ya que estaremos esperando un tipo de cambio para ser notificado
 
 ```
+public interface Observer {
+  public void update(String message);
+}
+
+public class CurrentMessage implements Observer {
+  public String message;
+  @Override
+  public void update(String message) {
+    this.setMessage(message);
+    log.info("El mensaje actual es: {}", message)
+  } 
+}
+
+public class AlternativeMessage implements Observer {
+  public String message;
+  @Override
+  public void update(String message) {
+    this.setMessage(message);
+    log.info("El mensaje alternativo es: {}", message)
+  } 
+}
+
+public class Whatsapp {
+  private String message;
+  private List<Observer> observers = new ArrayList<>();
+  public void addObserver(Observer observer) {
+    this.observers.add(observer);
+  }
+  public void removeObserver(Observer observer) {
+    observers.remove(observer);
+  }
+  public void setMessage(String message) {
+    this.message = message;
+    notifyObservers();
+  }
+  public void notifyObservers() {
+    for (Observer observer : this.observers) {
+      observer.update(this.message);
+    }
+  }
+}
+
+public class MessageServicec {
+  public void sendMessage(){
+    Whatsapp whatsapp = new Whatsapp();
+
+    TextMessage textMessage = new TextMessage();
+    AlternativeMessage alternativeMessage = new AlternativeMessage();
+
+    whatsapp.addOvservable(textMessage);
+    whatsapp.addOvservable(alternativeMessage);
+
+    whatsapp.setMessage("Hola");
+    //Output:
+    // El mensaje actual es: Hola
+    // El mensaje alternativo es: Hola
+
+    whatsapp.removeObserver(alternativeMessage);
+    whatsapp.setMessage("Ricardo");
+    //Output:
+    // El mensaje actual es: Ricardo
+  }    
+}
+
 ```
 
 ### Efficient Management of Asynchronous Operations
 > Por utlimo ocuparemos el patron **Asynchronus** que nos ayudara a hacer operaciones asincronos para procesoso que pueden ejecutarse sin esperar una respuesta al cliente
 
 ```
+public class PaymentModel {
+  private BigDecimal amount;
+  private String clabe;
+  private String email;
+  private String phone;
+}
+
+public class BankModel {
+  private Integer status;
+}
+
+public class DatabaseModel {
+  private Integer status;
+}
+
+public class PaymentService {
+
+  private BankService bankService;
+  private NotificationService notificationService;
+  private DatabaseService databaseService;
+  
+  public void sendPayment(PaymentModel payment) {
+    CompletableFuture<BankModel> responseBank = CompletableFuture.applyAsync(() -> bankService.send(payment));
+    CompletableFuture<DatabaseModel> responseDB = CompletableFuture.applyAsync(() -> databaseService.register(payment));
+
+    CompletableFuture<void> done = CompletableFuture.allOf(responseBank, responseDB);
+
+    done.thenApply(() -> notificationService.sendPush(payment)); 
+  }
+}
 ```
 
